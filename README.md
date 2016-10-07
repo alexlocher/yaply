@@ -61,7 +61,7 @@ You can also use cmake:
 
 ```bash
 git clone https://github.com/alexlocher/yaply.git
-mkdir build && cd build
+cd yaply && mkdir build && cd build
 cmake ..
 make install
 ```
