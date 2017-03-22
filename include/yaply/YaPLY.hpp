@@ -21,12 +21,12 @@ namespace yaply {
 typedef uint32_t PLY_ELEMENT_UINT32;
 typedef float PLY_ELEMENT_FLOAT;
 
-template<typename T> const char* ply_type(); // not implemented
+template<typename T> inline const char* ply_type(); // not implemented
 
 // specialized implementation for different types
 #define DEFINE_PLY_TYPE( type , name ) \
 template<>\
-const char* ply_type<type>() {\
+inline const char* ply_type<type>() {\
    return #name;\
 }
 
@@ -107,7 +107,7 @@ public:
 
 // we have to specialize uchar and char for ascii (otherwise its not printed as a number)
 template<>
-void PLY_PROPERTY_SCALAR<unsigned char>::print_data(std::ostream& ostr, const size_t nr,
+inline void PLY_PROPERTY_SCALAR<unsigned char>::print_data(std::ostream& ostr, const size_t nr,
 		bool binary) const {
 	if (binary)
 		ostr.write((char*) &data[nr], 1);
@@ -116,7 +116,7 @@ void PLY_PROPERTY_SCALAR<unsigned char>::print_data(std::ostream& ostr, const si
 }
 
 template<>
-void PLY_PROPERTY_SCALAR<char>::print_data(std::ostream& ostr, const size_t nr, bool binary) const {
+inline void PLY_PROPERTY_SCALAR<char>::print_data(std::ostream& ostr, const size_t nr, bool binary) const {
 	if (binary)
 		ostr.write((char*) &data[nr], 1);
 	else
@@ -124,7 +124,7 @@ void PLY_PROPERTY_SCALAR<char>::print_data(std::ostream& ostr, const size_t nr, 
 }
 
 template<>
-bool PLY_PROPERTY_SCALAR<uint8_t>::load(std::istream& istr, size_t nr, bool binary) {
+inline bool PLY_PROPERTY_SCALAR<uint8_t>::load(std::istream& istr, size_t nr, bool binary) {
 	if (binary)
 		istr.read((char*) &data[nr], 1);
 	else {
@@ -277,7 +277,7 @@ bool PLY_ELEMENT::getScalarProperty(const char* name, std::vector<SCALAR>& p){
 	return true;
 }
 
-bool PLY_ELEMENT::existsProperty(const char* name) const {
+inline bool PLY_ELEMENT::existsProperty(const char* name) const {
 	for (const auto& property : properties) {
 		if (property->name.compare(name) == 0) {
 			return true;
@@ -286,7 +286,7 @@ bool PLY_ELEMENT::existsProperty(const char* name) const {
 	return false;
 }
 
-bool PLY_ELEMENT::existsProperties(const char* name) const {
+inline bool PLY_ELEMENT::existsProperties(const char* name) const {
 	std::vector<std::string> names = split(name, ',');
 	for (const auto& n : names) {
 		if (!existsProperty(n.c_str()))
@@ -295,7 +295,7 @@ bool PLY_ELEMENT::existsProperties(const char* name) const {
 	return true;
 }
 
-std::unique_ptr<PLY_PROPERTY> make_property(const std::string& line, const size_t nrElements) {
+inline std::unique_ptr<PLY_PROPERTY> make_property(const std::string& line, const size_t nrElements) {
 	std::unique_ptr<PLY_PROPERTY> p(nullptr);
 
 	std::vector<std::string> tok = split(line, ' ');
@@ -365,7 +365,7 @@ public:
 //	void set(const char* name, const TYPE* data);
 };
 
-PLY_ELEMENT& PlyFile::operator[](const std::string& name) {
+inline PLY_ELEMENT& PlyFile::operator[](const std::string& name) {
 	for (PLY_ELEMENT& element : elements_) {
 		if (name.compare(element.name) == 0)
 			return element;
@@ -374,7 +374,7 @@ PLY_ELEMENT& PlyFile::operator[](const std::string& name) {
 	return elements_.back();
 }
 
-void PlyFile::save(const char* fname, bool binary) const {
+inline void PlyFile::save(const char* fname, bool binary) const {
 
 	// test endianness
 	int32_t n = 0;
@@ -420,7 +420,7 @@ void PlyFile::save(const char* fname, bool binary) const {
 	pData.close();
 }
 
-bool PlyFile::load(const std::string& file) {
+inline bool PlyFile::load(const std::string& file) {
 
 	PLY_FORMAT ply_format = PLY_FORMAT::unknown;
 	elements_.clear();
