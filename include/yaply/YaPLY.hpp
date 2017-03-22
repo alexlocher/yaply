@@ -12,6 +12,8 @@
 #include <memory>
 #include <fstream>
 #include <iostream>
+#include <iomanip>
+#include <limits>
 #include <sstream>
 
 namespace yaply {
@@ -218,8 +220,8 @@ public:
 	template<typename SCALAR>
 	bool getScalarProperty(const char* name, std::vector<SCALAR>& p);
 
-	bool exitsProperty(const char* name);
-	bool exitsProperties(const char* name);
+	bool existsProperty(const char* name) const;
+	bool existsProperties(const char* name) const;
 };
 
 template<typename TYPE>
@@ -275,8 +277,8 @@ bool PLY_ELEMENT::getScalarProperty(const char* name, std::vector<SCALAR>& p){
 	return true;
 }
 
-bool PLY_ELEMENT::exitsProperty(const char* name) {
-	for (auto& property : properties) {
+bool PLY_ELEMENT::existsProperty(const char* name) const {
+	for (const auto& property : properties) {
 		if (property->name.compare(name) == 0) {
 			return true;
 		}
@@ -284,10 +286,10 @@ bool PLY_ELEMENT::exitsProperty(const char* name) {
 	return false;
 }
 
-bool PLY_ELEMENT::exitsProperties(const char* name) {
+bool PLY_ELEMENT::existsProperties(const char* name) const {
 	std::vector<std::string> names = split(name, ',');
 	for (const auto& n : names) {
-		if (!exitsProperty(n.c_str()))
+		if (!existsProperty(n.c_str()))
 			return false;
 	}
 	return true;
@@ -381,6 +383,7 @@ void PlyFile::save(const char* fname, bool binary) const {
 	// output the header
 	std::ofstream pFile(fname, std::ofstream::out);
 	pFile << "ply" << std::endl;
+	pFile << std::setprecision (std::numeric_limits<double>::digits10 + 1);
 	if (binary && bigEndian)
 		pFile << "format binary_big_endian 1.0" << std::endl;
 	else if (binary)
