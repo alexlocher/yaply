@@ -310,7 +310,7 @@ inline std::unique_ptr<PLY_PROPERTY> make_property(const std::string& line, cons
 			p.reset(new PLY_PROPERTY_LIST<int32_t, int32_t>(tok[4], nrElements));
 		} else {
 			std::cerr << "cannot handle list element <" << line << ">" << std::endl;
-			return false;
+			return p;
 		}
 	} else if (tok.size() == 3) {
 		// new scalar element
@@ -332,11 +332,11 @@ inline std::unique_ptr<PLY_PROPERTY> make_property(const std::string& line, cons
 			p.reset(new PLY_PROPERTY_SCALAR<double>(tok[2],nrElements));
 		} else {
 			std::cerr << "unknown scalar property <" << line << ">" << std::endl;
-			return false;
+			return p;
 		}
 	} else {
 		std::cerr << "Invalid ply file [property definition <" << line << ">]" << std::endl;
-		return false;
+		return p;
 	}
 	return p;
 }
